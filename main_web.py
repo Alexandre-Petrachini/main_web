@@ -132,17 +132,16 @@ def turn_led_onoff(action):
         print("local mode select :", model_select)
         print("Hello DQ1 Algorithm Studio-232! original image on!")
         print("##################################################")
-
-	if (action == "next"):
-		model_init_lock = 1
-		model_select = model_select + 1
-	if (model_select > 6):
-		model_select = 0
-		model_init_lock = 1
-		print("##################################################")
-		print("local mode select :", model_select)
-		print("Hello DQ1 Algorithm Studio-232! Next on!")
-		print("##################################################")
+    if(action == "next"):
+        model_init_lock = 1
+        model_select = model_select + 1
+    if (model_select > 6):
+        model_select = 0
+        model_init_lock = 1
+        print("##################################################")
+        print("local mode select :", model_select)
+        print("Hello DQ1 Algorithm Studio-232! Next on!")
+        print("##################################################")
 
     return (''), 204
 
@@ -162,7 +161,7 @@ def gen(camera):
 #    Tnet = TinyYoloNet("./models/tiny_yolo.lne")
 #    Mtcnn_C = Mtcnn()
 #Enet = EmoNet("./models/emotion.lne")
-	lpdr_net = LicensePlateDetection('models/bin/baseline1/lpd_net.bin','models/bin/baseline1/lpd_net_data.bin','models/bin/baseline1/lpd.meta')
+    lpdr_net = LicensePlateDetection('models/bin/baseline1/lpd_net.bin','models/bin/baseline1/lpd_net_data.bin','models/bin/baseline1/lpd.meta')
 
     while True:
         s0 = time.time()
@@ -187,8 +186,8 @@ def gen(camera):
                 model_init_lock = 0
             elif (model_select == 6):
                 model_init_lock = 0
-			elif (model_select == 7):
-				model_init_lock = 0
+            elif (model_select == 7):
+                model_init_lock = 0
             else :
                 model_init_lock = 0
                 model_select    = 0
@@ -210,29 +209,29 @@ def gen(camera):
 #            print("Total :", s5 - s0)
 
 		# LPDR run, if event occur
-		elif(model_init_lock == 0 and model_select == 7):
+        elif(model_init_lock == 0 and model_select == 7):
 			#print("LPDR model select :", model_select)
-			persist = True
-			stg2_img = np.zeros((1080,1920,3), dtype=np.uint8)
-			stg2_bbox = [0,0,0,0]
-		    stg1_total_time, stg2_total_time = [], []
+            persist = True
+            stg2_img = np.zeros((1080,1920,3), dtype=np.uint8)
+            stg2_bbox = [0,0,0,0]
+            stg1_total_time, stg2_total_time = [], []
             img = cv2.imread(orig_img, cv2.IMREAD_COLOR)
-	        stg1_img, stg1_bbox, stg1_times = lp_detection(args, net, img)
-	        stg1_total_time += [stg1_times]
-			if stg1_img.size and stg1_img.shape[0] != 0 and stg1_img.shape[1] != 0:
-				stg2_img, stg2_bbox, stg2_times = lp_detection(args, net, stg1_img, stg1_bbox)
-	            stg2_total_time += [stg2_times]
-			else:
-				stg2_img = img
-				stg2_bbox = [0,0,0,0]
-				print('-- Car Not Found')
-				output_file = os.path.join(output_path, "res_{}.txt".format(os.path.splitext(os.path.basename(fname))[0]))
-				np.savetxt(output_file, [stg2_bbox], fmt="%d,%d,%d,%d")
+            stg1_img, stg1_bbox, stg1_times = lp_detection(args, net, img)
+            stg1_total_time += [stg1_times]
+            if stg1_img.size and stg1_img.shape[0] != 0 and stg1_img.shape[1] != 0:
+                stg2_img, stg2_bbox, stg2_times = lp_detection(args, net, stg1_img, stg1_bbox)
+                stg2_total_time += [stg2_times]
+            else:
+                stg2_img = img
+                stg2_bbox = [0,0,0,0]
+                print('-- Car Not Found')
+                output_file = os.path.join(output_path, "res_{}.txt".format(os.path.splitext(os.path.basename(fname))[0]))
+                np.savetxt(output_file, [stg2_bbox], fmt="%d,%d,%d,%d")
 
-			if persist:
-					output_cropped = os.path.join(args.output_path, "cropped", os.path.relpath(fname, args.dataset_path))
-					safe_create_dir(os.path.dirname(output_cropped))
-					cv2.imwrite(output_cropped, stg2_img)
+            if persist:
+                output_cropped = os.path.join(args.output_path, "cropped", os.path.relpath(fname, args.dataset_path))
+                safe_create_dir(os.path.dirname(output_cropped))
+                cv2.imwrite(output_cropped, stg2_img)
 
         # MobileNet run, if event occur
         elif(model_init_lock == 0 and model_select == 2):
